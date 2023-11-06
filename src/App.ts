@@ -1,19 +1,20 @@
-import express from "express";
-import { router } from "./routes/index";
-import cors, { CorsOptions } from "cors";
-import  dotenv from "dotenv";
-dotenv.config(
-);
+import express from 'express';
+import { router } from './routes/index.routes';
+import cors, { CorsOptions } from 'cors';
+import  SwaggerRoutes  from './routes/swagger.routes'
+import dotenv from 'dotenv';
+dotenv.config();
 
-class App{
+class App {
   public server: express.Application;
   private corsOptions: CorsOptions = {
-    origin: "*"
+    origin: '*',
   };
 
-  constructor(){
+  constructor() {
     this.server = express();
     this.config();
+    this.configSwagger();
     this.middleware();
     this.router();
   }
@@ -22,13 +23,17 @@ class App{
     this.server.use(cors(this.corsOptions));
   }
 
-  private middleware(){
+  private middleware() {
     this.server.use(express.json());
-    
+    this.server.use(express.urlencoded({ extended: true }));
+  }
+  private async configSwagger(): Promise<void> {
+    const swagger = await SwaggerRoutes.load();
+    this.server.use(swagger);
   }
 
-  private router(){
+  private router() {
     this.server.use(router);
   }
 }
-export default new App
+export default new App();
