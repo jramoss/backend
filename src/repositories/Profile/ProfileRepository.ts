@@ -4,7 +4,7 @@ import IProfile from './IProfile';
 
 class ProfileRepository {
   public index = async (): Promise<Profile[] | undefined> => {
-    const data = await prisma.profile.findMany();
+    const data = await prisma.profile.findMany({ include: { user: {} } });
     if (data) {
       return data;
     }
@@ -45,43 +45,17 @@ class ProfileRepository {
   };
 
   public update = async ({ id, bio, userId }: IProfile) => {
-    const ProfileAllreadExist = await prisma.profile.findUnique({
-      where: {
-        id,
-      },
-    });
+    const ProfileAllreadExist = await prisma.profile.findUnique({ where: { id } });
 
     if (ProfileAllreadExist) {
-      return { message: 'Profile ja cadastrado' };
-    }
-
-    const userIdProfileAllreadExist = await prisma.profile.findUnique({
-      where: {
-        userId,
-        AND: {
-          NOT: {
-            id,
-          },
-        },
-      },
-    });
-
-    if (userIdProfileAllreadExist) {
-      const updatedProfile = await prisma.profile.update({
-        where: {
-          id,
-        },
-        data: {
-          bio,
-          userId,
-        },
-      });
-
+      const updatedProfile = await prisma.profile.update({ where: { id }, data: { bio, userId } });
       if (updatedProfile) {
-        return updatedProfile;
+        return { message: 'Atualizado com sucesso', updatedProfile };
+      } else {
+        return { erro: 'Userid nao encontrado' };
       }
     } else {
-      return { erro: 'Userid nao encontrado' };
+      return { message: 'Profile não encontrado' };
     }
   };
 
