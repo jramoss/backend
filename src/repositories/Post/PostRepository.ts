@@ -10,7 +10,7 @@ class PostRepository {
     return;
   };
 
-  public read = async (id: string)=> {
+  public read = async (id: string) => {
     const post = await prisma.post.findUnique({
       where: {
         id,
@@ -27,52 +27,51 @@ class PostRepository {
         title,
         published,
         authorId,
-      }
+      },
     });
 
     if (createPost) {
-      console.log(createPost);
       return createPost;
     }
     return createPost;
   };
 
   public update = async ({ id, title, published, authorId }: IPostDto) => {
-    const ProfileAllreadExist = await prisma.post.findUnique({ where: { id } });
+    const PostAlreadExist = await prisma.post.findUnique({ where: { id } });
 
-    if (ProfileAllreadExist) {
-      const updatedProfile = await prisma.post.update({
+    if (PostAlreadExist) {
+      const updatedPost = await prisma.post.update({
         where: { id },
         data: { id, title, published, authorId },
       });
-      if (updatedProfile) {
-        return { message: 'Atualizado com sucesso', updatedProfile };
+      if (updatedPost) {
+        return { message: 'Atualizado com sucesso', updatedPost };
       } else {
         return { erro: 'Userid nao encontrado' };
       }
     } else {
-      return { message: 'Profile não encontrado' };
+      return { message: 'Post não encontrado' };
     }
   };
 
   public delete = async (id: string) => {
-    const ProfileAllreadExist = await prisma.post.findUnique({
+    const PostAlreadExist = await prisma.post.findUnique({
       where: {
         id,
       },
     });
 
-    if (ProfileAllreadExist) {
-      const deleteUser = await prisma.profile.delete({
+    if (PostAlreadExist) {
+      const deletePost = await prisma.post.delete({
         where: {
           id,
         },
       });
-      if (deleteUser) {
-        return { erro: 'Profile deletato com sucesso' };
+      if (deletePost) {
+        return { erro: 'Post deletato com sucesso' };
       }
     } else {
-      return { message: 'Profile não encontrado' };
+      return { message: 'Post não encontrado' };
     }
   };
 }

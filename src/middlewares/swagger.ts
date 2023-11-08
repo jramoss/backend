@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import fs from 'fs';
 import { resolve } from 'path';
 
 class SwaggerConfig {
-  private readonly config: any;
+  private readonly config: unknown;
 
   private paths = {};
 
@@ -59,14 +60,16 @@ class SwaggerConfig {
 
   /**
    * Função responsável por percorrer as pastas e adicionar a documentação de cada módulo
-   * @returns 
+   * @returns
    */
-  public async load(): Promise<{}> {
+  public async load(): Promise<object> {
     const dir = await fs.readdirSync(resolve(__dirname, '..', 'apps'));
     const swaggerDocument = dir.reduce(
       (total, path) => {
         try {
-          const swagger = require(`../apps/${path}/swagger`);
+          const newLocal = require(`../apps/${path}/swagger`);
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const swagger = newLocal;
           const aux = total;
           aux.paths = { ...total.paths, ...swagger.default.paths };
           if (swagger.default.definitions) {
@@ -82,10 +85,9 @@ class SwaggerConfig {
         }
       },
       {
-        ...this.config,
         paths: { ...this.paths },
         definitions: { ...this.definitions },
-      }
+      },
     );
     return swaggerDocument;
   }

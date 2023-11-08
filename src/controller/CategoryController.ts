@@ -22,8 +22,8 @@ class CategoryController {
 
   create = async (req: Request, res: Response) => {
     try {
-      const { name } = req.body;
-      const newCategry = await this.repo.save(name);
+      const { name, posts } = req.body;
+      const newCategry = await this.repo.save({name,posts});
       if (newCategry) {
         return res.json(newCategry).status(200);
       }

@@ -1,9 +1,9 @@
+import { error } from 'console';
 import prisma from '../../config/database/prisma';
 import IUser from './IUser';
 import IUserDto from './IUserDto';
 
 class UserRepository {
-  
   public index = async () => {
     const data = await prisma.user.findMany();
     if (data) {
@@ -11,7 +11,7 @@ class UserRepository {
     }
   };
 
-  public read = async (id:string) => {
+  public read = async (id: string) => {
     const res = await prisma.user.findUnique({
       where: {
         id,
@@ -23,12 +23,12 @@ class UserRepository {
   };
 
   public save = async ({ name, email, dateNasc, role }: IUser) => {
-    const emailAllreadExist = await prisma.user.findUnique({
+    const UserAlreadExist = await prisma.user.findUnique({
       where: {
         email,
       },
     });
-    if (emailAllreadExist) {
+    if (UserAlreadExist) {
       return { Erro: 'email ja cadastrado' };
     }
     const createUser = await prisma.user.create({
@@ -43,6 +43,7 @@ class UserRepository {
     if (createUser) {
       return createUser;
     }
+    console.log(error);
     return createUser;
   };
 
@@ -69,15 +70,8 @@ class UserRepository {
 
     if (useralreadyexists) {
       const updateUser = await prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
-          name,
-          email,
-          dateNasc,
-          role,
-        },
+        where: { id },
+        data: { name, email, dateNasc, role },
       });
 
       if (updateUser) {

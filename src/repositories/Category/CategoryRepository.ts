@@ -1,5 +1,6 @@
 import prisma from '../../config/database/prisma';
 import ICategory from './ICategory';
+import ICategoryDto from './ICategoryDto';
 
 class CategoryRepository {
   public index = async () => {
@@ -21,10 +22,20 @@ class CategoryRepository {
     }
   };
 
-  public save = async (name: string) => {
-    const CategotyAllreadExist = await prisma.category.create({ data: { name } });
-    console.log(CategotyAllreadExist);
-    return CategotyAllreadExist;
+  public save = async ({ name, posts }: ICategoryDto) => {
+    const CategotyAlreadExist = await prisma.category.findMany({ where: { name } });
+    if (!CategotyAlreadExist) {
+      return { erro: 'Categoty AlreadExist' };
+    }
+    const CategotyCreate = await prisma.category.create({
+      data: {
+        name,
+        posts: { create: posts },
+      },
+    });
+    if (CategotyCreate) {
+      return { message: 'Categoria Cadastrada com sucesso\n', CategotyCreate };
+    }
   };
 
   public update = async ({ id, name }: ICategory) => {
@@ -38,7 +49,7 @@ class CategoryRepository {
         return { erro: 'Userid nao encontrado' };
       }
     } else {
-      return { message: 'Profile não encontrado' };
+      return { message: 'Category não encontrado' };
     }
   };
 
@@ -56,10 +67,10 @@ class CategoryRepository {
         },
       });
       if (deleteCategory) {
-        return { erro: 'Profile deletato com sucesso' };
+        return { erro: 'Category deletato com sucesso' };
       }
     } else {
-      return { message: 'Profile não encontrado' };
+      return { message: 'Category não encontrado' };
     }
   };
 }

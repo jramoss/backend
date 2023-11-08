@@ -11,7 +11,7 @@ class ProfileRepository {
     return;
   };
 
-  public read = async (id: string): Promise<Profile | undefined> => {
+  public read = async (id: string) => {
     const res = await prisma.profile.findUnique({
       where: {
         id,
@@ -22,14 +22,14 @@ class ProfileRepository {
     }
   };
 
-  public save = async (bio: string, userId: string): Promise<Profile | typeof Error> => {
+  public save = async (bio: string, userId: string) => {
     const ProfileAllreadExist = await prisma.profile.findUnique({
       where: {
         userId,
       },
     });
     if (ProfileAllreadExist) {
-      throw new Error('profile ja cadastrado');
+      return { error: 'profile ja cadastrado' };
     }
     const createUser = await prisma.profile.create({
       data: {

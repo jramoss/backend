@@ -17,14 +17,13 @@ export const schema = yup.object({
       )
       .required(),
     dataNasc: yup.date(),
-  
   }),
   params: yup.object({
     id: yup.string().uuid('id invalido'),
   }),
 });
 
-const Uservalidate = (schema: yup.ObjectSchema<{ body: { dataNasc?: Date | undefined; name: string; email: string; role: NonNullable<$Enums.Role | undefined>; }; params: { id?: string | undefined; }; }, yup.AnyObject, { body: { name: undefined; email: undefined; role: undefined; dataNasc: undefined; }; params: { id: undefined; }; }, "">) => async (req: Request, res: Response, next: NextFunction) => {
+const Uservalidate = () => async (req: Request, res: Response, next: NextFunction) => {
   try {
     await schema.validate({
       body: req.body,
