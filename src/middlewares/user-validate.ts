@@ -1,44 +1,46 @@
-import { $Enums } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
-import yup from '../config/yup';
+import * as z from 'zod';
 
-export const schema = yup.object({
-  body: yup.object({
-    name: yup
-      .string()
-      .min(3, 'O campo nome deve conter o minimo de 3 caracteres')
-      .required('O campo nome e obrigatorio'),
-    email: yup.string().email('Infome um e-mail invalido para o campo E-mail:').required(),
-    role: yup
-      .mixed<$Enums.Role>()
-      .oneOf(
-        Object.values($Enums.Role),
-        'O campo role deve ser preenchido com um dos seguintes valores: USER | ADMIN | MANAGER',
-      )
-      .required(),
-    dataNasc: yup.date(),
-  }),
-  params: yup.object({
-    id: yup.string().uuid('id invalido'),
+export const schema = z.object({
+  body: z.object({
+    name: z
+      .string({ required_error: 'O campo nome e obrigatorio' })
+      .min(3, { message: 'O campo nome deve conter o minimo de 3 caracteres' })
+      .trim(),
+    email: z
+      .string({
+        required_error: 'Email is required',
+      })
+      .trim()
+      .min(1, 'Email cannot be empty')
+      .email('Invalid email'),
+    role: z.enum(['ADMIN', 'USER', 'MANAGER']),
+    dataNasc: z
+      .string({
+        required_error: 'Data is required',
+        invalid_type_error: 'Name must be a string',
+      }).datetime({ precision: 1, offset: true }),
   }),
 });
 
 const Uservalidate = () => async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await schema.validate({
+    schema.parse({
       body: req.body,
       query: req.query,
       params: req.params,
     });
     return next();
-  } catch (err) {
-    if (err instanceof Error) {
+  } catch (error) {
+    let err = error;
+    if (err instanceof z.ZodError) {
+      err = err?.issues.map((e: { path: unknown[]; message: unknown; }) => ({ path: e.path[0], message: e.message }));
       return res.status(500).json({
-        type: err.name,
-        message: err.message,
+        err,
       });
     } else {
       console.log('Unexpected error', err);
+      return { status: 'failed', error: err };
     }
   }
 };

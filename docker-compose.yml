@@ -11,7 +11,13 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+  app:
+    container_name: app
+    build: ./
+    expose:
+      - 3000:3000
+    volumes:
+      - ./dist
 volumes:
   postgres:
-      driver: local
-        
+    driver: local

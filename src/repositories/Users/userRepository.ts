@@ -1,4 +1,3 @@
-import { error } from 'console';
 import prisma from '../../config/database/prisma';
 import IUser from './IUser';
 import IUserDto from './IUserDto';
@@ -43,7 +42,7 @@ class UserRepository {
     if (createUser) {
       return createUser;
     }
-    console.log(error);
+    console.log(createUser);
     return createUser;
   };
 

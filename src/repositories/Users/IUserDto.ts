@@ -4,7 +4,7 @@ interface IuserDto {
   id: string;
   email?: string;
   name?: string;
-  dateNasc?: Date;
+  dateNasc: Date;
   role?: $Enums.Role;
 }
 
