@@ -21,7 +21,7 @@ class UserRepository {
     }
   };
 
-  public save = async ({ name, email, dateNasc, role }: IUser) => {
+  public save = async ({ name, email, dNasc, role }: IUser) => {
     const UserAlreadExist = await prisma.user.findUnique({
       where: {
         email,
@@ -34,7 +34,7 @@ class UserRepository {
       data: {
         name,
         email,
-        dateNasc,
+        dNasc,
         role,
       },
     });
@@ -46,7 +46,7 @@ class UserRepository {
     return createUser;
   };
 
-  public update = async ({ id, name, email, dateNasc, role }: IUserDto) => {
+  public update = async ({ id, name, email,dNasc, role }: IUserDto) => {
     const useralreadyexists = await prisma.user.findUnique({
       where: {
         id,
@@ -70,7 +70,7 @@ class UserRepository {
     if (useralreadyexists) {
       const updateUser = await prisma.user.update({
         where: { id },
-        data: { name, email, dateNasc, role },
+        data: { name, email, dNasc, role },
       });
 
       if (updateUser) {

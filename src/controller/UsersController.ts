@@ -23,8 +23,8 @@ class UsersController {
 
   create = async (req: Request, res: Response) => {
     try {
-      const { name, email, dateNasc, role }: IUser = req.body;
-      const newusers = await this.repo.save({ name, email, dateNasc, role });
+      const { name, email, dNasc, role }: IUser = req.body;
+      const newusers = await this.repo.save({ name, email, dNasc, role });
       if (newusers) {
         return res.json(newusers).status(200);
       }
@@ -49,9 +49,9 @@ class UsersController {
   update = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const { name, email, dateNasc, role }: IUserDto = req.body;
+      const { name, email, dNasc, role }: IUserDto = req.body;
       const repo = new UserRepo();
-      const UpdateUser = await repo.update({ id, name, email, dateNasc, role });
+      const UpdateUser = await repo.update({ id, name, email, dNasc, role });
 
       if (UpdateUser) {
         return res.json(UpdateUser).status(200);

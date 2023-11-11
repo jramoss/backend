@@ -1,7 +1,6 @@
 import express from 'express';
 import { router } from './routes/index.routes';
 import cors, { CorsOptions } from 'cors';
-import  SwaggerRoutes  from './routes/swagger.routes'
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,7 +13,6 @@ class App {
   constructor() {
     this.server = express();
     this.config();
-    this.configSwagger();
     this.middleware();
     this.router();
   }
@@ -27,11 +25,6 @@ class App {
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
   }
-  private async configSwagger(): Promise<void> {
-    const swagger = await SwaggerRoutes.load();
-    this.server.use(swagger);
-  }
-
   private router() {
     this.server.use(router);
   }

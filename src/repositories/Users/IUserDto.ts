@@ -4,8 +4,8 @@ interface IuserDto {
   id: string;
   email?: string;
   name?: string;
-  dateNasc: Date;
+  dNasc?: Date;
   role?: $Enums.Role;
 }
 
-export default IuserDto ;
+export default IuserDto;

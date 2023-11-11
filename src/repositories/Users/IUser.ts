@@ -4,7 +4,7 @@ interface IUser {
   id?: string;
   email: string;
   name: string;
-  dateNasc: Date;
+  dNasc: Date;
   role: $Enums.Role;
 }
 
