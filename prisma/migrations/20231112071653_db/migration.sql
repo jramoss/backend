@@ -1,31 +1,19 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'MANAGER');
 
-  - You are about to drop the `Category` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Post` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Profile` table. If the table is not empty, all the data it contains will be lost.
+-- CreateTable
+CREATE TABLE "Users" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT,
+    "password" TEXT,
+    "dNasc" TIMESTAMP NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'USER',
+    "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP NOT NULL,
 
-*/
--- DropForeignKey
-ALTER TABLE "Post" DROP CONSTRAINT "Post_authorId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Profile" DROP CONSTRAINT "Profile_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "_CategoryToPost" DROP CONSTRAINT "_CategoryToPost_A_fkey";
-
--- DropForeignKey
-ALTER TABLE "_CategoryToPost" DROP CONSTRAINT "_CategoryToPost_B_fkey";
-
--- DropTable
-DROP TABLE "Category";
-
--- DropTable
-DROP TABLE "Post";
-
--- DropTable
-DROP TABLE "Profile";
+    CONSTRAINT "Users_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Profiles" (
@@ -42,6 +30,7 @@ CREATE TABLE "Posts" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
     "published" BOOLEAN NOT NULL DEFAULT false,
     "authorId" TEXT NOT NULL,
 
@@ -51,10 +40,20 @@ CREATE TABLE "Posts" (
 -- CreateTable
 CREATE TABLE "Categories" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "nameCategory" TEXT NOT NULL,
+    "slogCategory" TEXT,
 
     CONSTRAINT "Categories_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "_CategoryToPost" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Profiles_userId_key" ON "Profiles"("userId");
@@ -63,7 +62,16 @@ CREATE UNIQUE INDEX "Profiles_userId_key" ON "Profiles"("userId");
 CREATE INDEX "Posts_title_idx" ON "Posts"("title");
 
 -- CreateIndex
-CREATE INDEX "Categories_name_idx" ON "Categories"("name");
+CREATE UNIQUE INDEX "Categories_nameCategory_key" ON "Categories"("nameCategory");
+
+-- CreateIndex
+CREATE INDEX "Categories_nameCategory_idx" ON "Categories"("nameCategory");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_CategoryToPost_AB_unique" ON "_CategoryToPost"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_CategoryToPost_B_index" ON "_CategoryToPost"("B");
 
 -- AddForeignKey
 ALTER TABLE "Profiles" ADD CONSTRAINT "Profiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

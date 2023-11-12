@@ -1,5 +1,4 @@
 node_modules
 data
 dist
-# Keep environment variables out of version control
 .env

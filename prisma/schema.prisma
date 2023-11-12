@@ -11,6 +11,7 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String?
+  password  String?
   dNasc     DateTime @db.Timestamp()
   role      Role     @default(USER)
   posts     Post[]
@@ -35,7 +36,7 @@ model Post {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt()
   title      String
-  content    String 
+  content    String
   published  Boolean    @default(false)
   author     User       @relation(fields: [authorId], references: [id])
   authorId   String
@@ -46,11 +47,12 @@ model Post {
 }
 
 model Category {
-  id    String @id @default(uuid())
-  name  String
-  posts Post[]
+  id           String  @id @default(uuid())
+  nameCategory String  @unique
+  slogCategory String?
+  posts        Post[]
 
-  @@index([name])
+  @@index([nameCategory])
   @@map("Categories")
 }
 
